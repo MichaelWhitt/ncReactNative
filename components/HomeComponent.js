@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 //ScrollView can be used to render groups of lists of items (similar to flatlist). 
 //SV loads all at once, Flatlist -> lazy loading which renders part of a list at a time, 
 //on screen or abt to be, parts that have scrolled far off scrn are removed from memory.
@@ -46,16 +46,36 @@ function RenderItem(props){
     return <View/>
 }
 class Home extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            scaleValue: new Animated.Value(0)
+        };
+    }
 
+    animate(){
+        Animated.timing(
+            this.state.scaleValue,
+            {
+                toValue: 1,
+                duration: 1500,
+                useNativeDriver: true
+            }
+        ).start();
+    }
 
 
     static navigationOptions = {
         title: 'Home'
     }
 
+    componentDidMount(){
+        this.animate();
+    }
+
     render() {
         return (
-            <ScrollView>
+            <Animated.ScrollView style={{transform: [{scale: this.state.scaleValue}]}}>
                 <RenderItem
                     item={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
                     isLoading={this.props.campsites.isLoading}
@@ -71,7 +91,7 @@ class Home extends Component {
                     isLoading={this.props.partners.isLoading}
                     errMess={this.props.partners.errMess}
                 />
-            </ScrollView>
+            </Animated.ScrollView>
         );
     }
 }
